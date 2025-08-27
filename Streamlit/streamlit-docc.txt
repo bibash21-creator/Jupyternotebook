@@ -1,0 +1,255 @@
+1. Open your folder in vscode
+
+
+2. Create virtual environment
+   View: Terminal
+	python -m venv .venv  (.venv : name of the virtual environment)
+
+
+3. Activate your environment
+	.venv\Scripts\activate.bat   (If command prompt is used)
+	.venv\Scripts\activate      (if powershell is used)
+
+
+4. Install Streamlit
+	pip install streamlit
+
+
+5. Streamlit Hello
+	streamlit hello   or  python -m streamlit hello
+
+
+
+	import streamlit as st
+
+		https://www.datacamp.com/tutorial/streamlit
+
+6. Create a file 'app.py'
+	Run: streamlit run app.py
+
+
+7 Display Texts with Streamlit
+	st.write('Hello Everyone')
+
+	st.title()
+	st.markdown()
+	st.header()
+	st.subheader()
+	st.caption()
+	st.code()
+	st.latex()
+
+
+8. Display an image, video or audio file with streamlit
+	st.image('play.jpg', caption='Playing football')
+	st.audio()
+	st.video()
+
+
+9. Input Widgets
+	st.checkbox('Pick your option',['Yes','No'])
+	st.button('Click')
+	st.radio('Gender',['Male','Female'])
+	st.selectbox('Pick a fruit', ['Apple', 'Banana', 'Orange'])
+	st.multiselect('Choose a planet', ['Jupiter', 'Mars', 'Neptune'])	
+	st.select_slider('Pick a mark', ['Bad', 'Good', 'Excellent'])
+	st.slider('Pick a number', 0, 50)
+
+
+10. Input fields
+	st.number_input()
+	st.text_input()
+	st.date_input()
+	st.time_input()
+	st.text_area()
+	st.file_uploader()
+	st.color_picker()
+
+	st.number_input('Pick a number', 0, 10)
+	st.text_input('Email address')
+	st.date_input('Traveling date')
+	st.time_input('School time')
+	st.text_area('Description')
+	st.file_uploader('Upload a photo')
+	st.color_picker('Choose your favorite color')
+
+
+11. Display progress and status with Streamlit
+	st.balloons()
+	st.progress()
+	st.spinner()
+
+	st.balloons()  # Celebration balloons
+	st.progress(10)  # Progress barwith 
+	st.spinner('Wait for it...'):    
+	time.sleep(10)  # Simulating a process delay
+
+
+	st.success()
+	st.error()
+	st.warning()
+	st.info()
+	st.exception()
+
+	st.success("You did it!")
+	st.error("Error occurred")
+	st.warning("This is a warning")
+	st.info("It's easy to build a Streamlit app")
+	st.exception(RuntimeError("RuntimeError exception"))
+
+
+12. Sidebar and container
+
+	st.sidebar.title("Sidebar Title")
+	st.sidebar.markdown("This is the sidebar content")
+
+
+	with st.container():
+		st.write('Inside container')
+Or,
+	container = st.container()
+	container.write('Inside container')
+	st.write('Outside container')
+
+
+12. Display graphs with Streamlit
+	st.pyplot()
+
+		import streamlit as st
+		import matplotlib.pyplot as plt
+		import numpy as np
+		rand = np.random.normal(1, 2, size=20)
+	fig, ax = plt.subplots()
+	ax.hist(rand, bins=15)
+	st.pyplot(fig)
+
+
+	st.line_chart()
+	st.bar_chart()
+	st.area_chart()
+	st.altair_chart()
+	st.graphviz_chart()
+	st.map()
+	
+	df = pd.DataFrame(np.random.randn(10, 2), columns=['x', 'y'])st.line_chart(df)
+
+
+
+
+Iris
+
+app.py
+import streamlit as st
+import pandas as pd
+import pickle
+
+
+# Title
+st.title('Iris Flower Classification')
+
+
+st.sidebar.header('User Input Features')
+
+def user_input_features():
+    sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4)
+    sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
+    petal_length = st.sidebar.slider('Petal length', 1.0, 6.9, 1.3)
+    petal_width = st.sidebar.slider('Petal width', 0.1, 2.5, 0.2)
+    data = {
+        'sepal_length': sepal_length,
+        'sepal_width': sepal_width,
+        'petal_length': petal_length,
+        'petal_width': petal_width
+    }
+    features = pd.DataFrame(data, index=[0])
+    return features
+
+df = user_input_features()
+
+# Display user input
+st.subheader('User Input parameters')
+st.write(df)
+
+
+
+# Load model
+model = pickle.load(open('iris_model.pkl', 'rb'))
+
+# Prediction
+prediction = model.predict(df)
+prediction_proba = model.predict_proba(df)
+
+st.subheader('Class labels and their corresponding index number')
+st.write(['setosa', 'versicolor', 'virginica'])
+
+st.subheader('Prediction')
+st.write(prediction[0])
+
+st.subheader('Prediction Probability')
+st.write(prediction_proba)
+
+
+
+
+
+
+
+Diabetes app
+
+For building app
+
+diabetes_app/
+│
+├── app.py                # Main Streamlit application
+├── model.py            # Prediction functions
+├── requirements.txt      # Dependencies
+└── assets
+    └── model.pkl        # Saved model
+
+
+pip install -r requirements.txt
+streamlit run app.py
+
+
+## model.py
+import pickle
+
+def predict_diabetes(input_data):
+    with open('saved/rfdiabetes.pkl','rb') as file:
+        model = pickle.load(file)
+
+    prediction = model.predict([input_data])
+    return prediction
+
+
+
+## app.py
+import streamlit as st
+from model import predict_diabetes
+
+
+st.set_page_config(
+        page_title="Diabetes Prediction App"
+)
+
+st.title('Diabetes Prediction')
+st.header('Input your data:')
+
+glucose = st.number_input('Glucose',min_value=0,max_value=400,value=0)
+blood_pressure = st.number_input('Blood Pressure',50,300,120)
+dfp = st.number_input('DFP',0,10,0)
+age = st.number_input('Age',15,99,40)
+
+if st.button('Test Diabetes'):
+    input_data = [glucose,blood_pressure,dfp,age]
+
+    prediction = predict_diabetes(input_data)
+    print(prediction)
+
+    if prediction[0] == 1:
+        st.write('High Probability of Diabetes')
+        st.warning('See your Doctor')
+
+    else:
+        st.success('Low chance of Diabetes')
+
